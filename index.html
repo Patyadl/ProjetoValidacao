@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Desafio em Portugol</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #problema { font-size: 1.2em; background: #f0f0f0; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+    textarea { width: 100%; height: 300px; font-family: monospace; font-size: 16px; }
+    button { padding: 10px; background-color: blue; color: white; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
+    #timer { font-weight: bold; margin-bottom: 10px; color: red; }
+  </style>
+</head>
+<body>
+
+  <h1>Resolva o seguinte problema em Portugol:</h1>
+  <div id="timer">Tempo restante: 300s</div>
+  <div id="problema"></div>
+
+  <p>Digite seu código abaixo:</p>
+  <textarea id="codigo">
+programa {
+  funcao inicio() {
+
+  }
+}
+  </textarea>
+
+  <br>
+  <button onclick="baixarArquivo()">Baixar Código</button>
+
+  <script>
+    const problemas = [
+      "Escreva um algoritmo que leia dois números e mostre o maior deles.",
+      "Escreva um algoritmo que leia a idade de uma pessoa e diga se ela é maior de idade.",
+      "Escreva um algoritmo que calcule a média de três notas e diga se o aluno foi aprovado.",
+      "Escreva um algoritmo que leia um número e diga se ele é par ou ímpar.",
+      "Escreva um algoritmo que leia 5 números e imprima a soma deles.",
+      "Escreva um algoritmo que leia o salário de um funcionário e calcule o novo salário com aumento de 10%.",
+      "Escreva um algoritmo que leia um número e imprima a tabuada dele até 10.",
+      "Escreva um algoritmo que leia o nome de um aluno e mostre quantas letras ele tem.",
+      "Escreva um algoritmo que leia dois valores e diga se são iguais ou diferentes.",
+      "Escreva um algoritmo que leia a idade de 3 pessoas e mostre quem é o mais velho."
+    ];
+
+    let problemaAtual = "";
+    let timer = 300;
+    let intervalo;
+    let problemasUsados = [];
+
+    function escolherNovoProblema() {
+      let novosProblemas = problemas.filter(p => p !== problemaAtual && !problemasUsados.includes(p));
+      if (novosProblemas.length === 0) {
+        problemasUsados = [];
+        novosProblemas = problemas.filter(p => p !== problemaAtual);
+      }
+      problemaAtual = novosProblemas[Math.floor(Math.random() * novosProblemas.length)];
+      problemasUsados.push(problemaAtual);
+      document.getElementById("problema").innerText = problemaAtual;
+      document.getElementById("codigo").value = `programa {\n  funcao inicio() {\n\n  }\n}`;
+      resetarTimer();
+    }
+
+    function resetarTimer() {
+      clearInterval(intervalo);
+      timer = 600;
+      document.getElementById("timer").innerText = `Tempo restante(segundos): ${timer}s`;
+      intervalo = setInterval(() => {
+        timer--;
+        document.getElementById("timer").innerText = `Tempo restante(segundos): ${timer}s`;
+        if (timer <= 0) {
+          escolherNovoProblema();
+        }
+      }, 1000);
+    }
+
+    function baixarArquivo() {
+      const codigo = document.getElementById('codigo').value;
+      const comentario = `// Problema em vigor:\n// ${problemaAtual}\n\n`;
+      const conteudoFinal = comentario + codigo;
+
+      const blob = new Blob([conteudoFinal], { type: 'text/plain' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "codigo_portugol.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        escolherNovoProblema();
+      }
+    });
+
+    escolherNovoProblema();
+  </script>
+</body>
+</html>
