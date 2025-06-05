@@ -10,6 +10,8 @@
     button { padding: 10px; background-color: blue; color: white; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
     #timer { font-weight: bold; margin-bottom: 10px; color: red; }
   </style>
+  <!-- Importando jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -27,7 +29,7 @@ programa {
   </textarea>
 
   <br>
-  <button onclick="baixarArquivo()">Baixar Código</button>
+  <button onclick="baixarPDF()">Baixar Código em PDF</button>
 
   <script>
     const problemas = [
@@ -74,18 +76,18 @@ programa {
       }, 1000);
     }
 
-    function baixarArquivo() {
-      const codigo = document.getElementById('codigo').value;
-      const comentario = `// Problema em vigor:\n// ${problemaAtual}\n\n`;
-      const conteudoFinal = comentario + codigo;
+    async function baixarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-      const blob = new Blob([conteudoFinal], { type: 'text/plain' });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "codigo_portugol.txt";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const problema = problemaAtual;
+      const codigo = document.getElementById("codigo").value;
+
+      const texto = `Problema em vigor:\n${problema}\n\nCódigo:\n${codigo}`;
+      
+      const linhas = doc.splitTextToSize(texto, 180);
+      doc.text(linhas, 10, 10);
+      doc.save("codigo_portugol.pdf");
     }
 
     document.addEventListener('visibilitychange', () => {
